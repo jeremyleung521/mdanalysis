@@ -289,7 +289,6 @@ class InterRDF(AnalysisBase):
         if self.norm == "rdf":
             # Cumulative volume for rdf normalization
             self.results.volume_cum = 0
-            self.volume_cum = 0
         # Set the max range to filter the search radius
         self._maxrange = self.rdf_settings["range"][1]
 
