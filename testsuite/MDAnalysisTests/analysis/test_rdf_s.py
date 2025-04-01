@@ -21,11 +21,12 @@
 # J. Comput. Chem. 32 (2011), 2319--2327, doi:10.1002/jcc.21787
 #
 import pytest
+import numpy as np
 
 from numpy.testing import assert_allclose, assert_almost_equal
 
 import MDAnalysis as mda
-from MDAnalysis.analysis.rdf import InterRDF_s, InterRDF
+from MDAnalysis.analysis.rdf import InterRDF_s, InterRDF, nested_array_sum
 
 from MDAnalysisTests.datafiles import GRO_MEMPROT, XTC_MEMPROT
 
@@ -117,7 +118,6 @@ def test_cdf(rdf):
 def test_density(u, sels, density, value, client_InterRDF_s):
     kwargs = {"density": density} if density is not None else {}
     rdf = InterRDF_s(u, sels, **kwargs).run(**client_InterRDF_s)
-    print(rdf.results.rdf[0][0][0], "RDF")
     assert_almost_equal(max(rdf.results.rdf[0][0][0]), value)
     if not density:
         s1 = u.select_atoms("name ZND and resid 289")
@@ -173,6 +173,28 @@ def test_rdf_attr_warning(rdf, attr):
     wmsg = f"The `{attr}` attribute was deprecated in MDAnalysis 2.0.0"
     with pytest.warns(DeprecationWarning, match=wmsg):
         getattr(rdf, attr) is rdf.results[attr]
+
+def test_nested_array_sum():
+    arr_1 = np.random.rand(1, 2, 75)
+    arr_2 = np.random.rand(2, 2, 75)
+    arr_3 = np.random.rand(1, 2, 75)
+    arr_4 = np.random.rand(2, 2, 75)
+    arrs = [[arr_1, arr_2],
+            [arr_3, arr_4]]
+
+    result = nested_array_sum(arrs)
+
+    assert result[0].shape == arrs[0][0].shape
+    assert result[0].shape == arrs[1][0].shape
+    assert result[1].shape == arrs[0][1].shape
+    assert result[1].shape == arrs[1][1].shape
+
+    assert np.array_equal(result[0], arr_1 + arr_3)
+    assert np.array_equal(result[1], arr_2 + arr_4)
+
+    arrs = [[np.ones((2, 2)), np.ones((2, 2))],
+            [np.ones((2, 2)), np.ones((2, 2))]]
+
 
 # tests for parallelization
 
