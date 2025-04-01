@@ -180,8 +180,7 @@ def test_nested_array_sum():
     arr_2 = np.random.rand(2, 2, 75)
     arr_3 = np.random.rand(1, 2, 75)
     arr_4 = np.random.rand(2, 2, 75)
-    arrs = [[arr_1, arr_2],
-            [arr_3, arr_4]]
+    arrs = [[arr_1, arr_2], [arr_3, arr_4]]
 
     result = nested_array_sum(arrs)
 
@@ -193,17 +192,20 @@ def test_nested_array_sum():
     assert np.array_equal(result[0], arr_1 + arr_3)
     assert np.array_equal(result[1], arr_2 + arr_4)
 
-    arrs = [[np.ones((2, 2)), np.ones((2, 2))],
-            [np.ones((2, 2)), np.ones((2, 2))]]
+    arrs = [
+        [np.ones((2, 2)), np.ones((2, 2))],
+        [np.ones((2, 2)), np.ones((2, 2))],
+    ]
 
 
 # tests for parallelization
+
 
 @pytest.mark.parametrize(
     "classname,is_parallelizable",
     [
         (mda.analysis.rdf.InterRDF_s, True),
-    ]
+    ],
 )
 def test_class_is_parallelizable(classname, is_parallelizable):
     assert classname._analysis_algorithm_is_parallelizable == is_parallelizable
@@ -212,9 +214,15 @@ def test_class_is_parallelizable(classname, is_parallelizable):
 @pytest.mark.parametrize(
     "classname,backends",
     [
-        (mda.analysis.rdf.InterRDF_s,
-         ('serial', 'multiprocessing', 'dask',)),
-    ]
+        (
+            mda.analysis.rdf.InterRDF_s,
+            (
+                "serial",
+                "multiprocessing",
+                "dask",
+            ),
+        ),
+    ],
 )
 def test_supported_backends(classname, backends):
     assert classname.get_supported_backends() == backends
