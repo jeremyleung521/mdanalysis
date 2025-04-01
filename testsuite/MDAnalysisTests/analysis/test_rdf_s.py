@@ -174,6 +174,7 @@ def test_rdf_attr_warning(rdf, attr):
     with pytest.warns(DeprecationWarning, match=wmsg):
         getattr(rdf, attr) is rdf.results[attr]
 
+
 def test_nested_array_sum():
     arr_1 = np.random.rand(1, 2, 75)
     arr_2 = np.random.rand(2, 2, 75)
