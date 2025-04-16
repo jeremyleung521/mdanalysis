@@ -359,7 +359,7 @@ class NCDFReader(base.ReaderBase):
     """Reader for `AMBER NETCDF format`_ (version 1.0).
 
     AMBER binary trajectories are automatically recognised by the
-    file extension ".ncdf".
+    file extension ".ncdf", ".nc", and '.ncrst'.
 
     The number of atoms (`n_atoms`) does not have to be provided as it can
     be read from the trajectory. The trajectory reader can randomly access
@@ -422,10 +422,12 @@ class NCDFReader(base.ReaderBase):
        the first two frames of the trajectory.
        :meth:`Writer` now also sets `convert_units`, `velocities`, `forces` and
        `scale_factor` information for the :class:`NCDFWriter`.
+    .. versionchanged:: 2.10.0
+       Now reads `AMBERRESTART` convention `.ncrst` files.
 
     """
 
-    format = ['NCDF', 'NC']
+    format = ['NCDF', 'NC', 'NCRST']
     multiframe = True
     version = "1.0"
     units = {'time': 'ps',
@@ -450,8 +452,14 @@ class NCDFReader(base.ReaderBase):
         # AMBER NetCDF files should always have a convention
         try:
             conventions = self.trjfile.Conventions
-            if not ('AMBER' in conventions.decode('utf-8').split(',') or
-                    'AMBER' in conventions.decode('utf-8').split()):
+            check = [conventions.decode('utf-8').split(','),
+                     conventions.decode('utf-8').split()]
+
+            if 'AMBER' in check[0] or 'AMBER' in check[1]:
+                self.is_restart = False
+            elif 'AMBERRESTART' in check[0] or 'AMBERRESTART' in check[1]:
+                self.is_restart = True
+            else:
                 errmsg = ("NCDF trajectory {0} does not conform to AMBER "
                           "specifications, "
                           "http://ambermd.org/netcdf/nctraj.xhtml "
@@ -530,9 +538,12 @@ class NCDFReader(base.ReaderBase):
             if self.n_frames is None:
                 self.n_frames = self.trjfile.variables['coordinates'].shape[0]
         except KeyError:
-            errmsg = (f"NCDF trajectory {self.filename} does not contain "
-                      f"frame information")
-            raise ValueError(errmsg) from None
+            if self.is_restart:
+                 self.n_frames = 1
+            else:
+                errmsg = (f"NCDF trajectory {self.filename} does not contain "
+                          f"frame information")
+                raise ValueError(errmsg) from None
 
         try:
             self.remarks = self.trjfile.title
@@ -645,21 +656,27 @@ class NCDFReader(base.ReaderBase):
         if np.dtype(type(frame)) != np.dtype(int):
             # convention... for netcdf could also be a slice
             raise TypeError("frame must be a positive integer or zero")
-        if frame >= self.n_frames or frame < 0:
+        if (frame >= self.n_frames or frame < 0):
             raise IndexError("frame index must be 0 <= frame < {0}".format(
                 self.n_frames))
         # note: self.trjfile.variables['coordinates'].shape == (frames, n_atoms, 3)
-        ts._pos[:] = self._get_var_and_scale('coordinates', frame)
+
+        if self.is_restart:
+            check_frame = ()  # AMBERRESTART convention files have dimensionless datasets
+        else:
+            check_frame = int(frame)
+
+        ts._pos[:] = self._get_var_and_scale('coordinates', check_frame)
         if self.has_time:
-            ts.time = self._get_var_and_scale('time', frame)
+            ts.time = self._get_var_and_scale('time', check_frame)
         if self.has_velocities:
-            ts._velocities[:] = self._get_var_and_scale('velocities', frame)
+            ts._velocities[:] = self._get_var_and_scale('velocities', check_frame)
         if self.has_forces:
-            ts._forces[:] = self._get_var_and_scale('forces', frame)
+            ts._forces[:] = self._get_var_and_scale('forces', check_frame)
         if self.periodic:
             unitcell = np.zeros(6)
-            unitcell[:3] = self._get_var_and_scale('cell_lengths', frame)
-            unitcell[3:] = self._get_var_and_scale('cell_angles', frame)
+            unitcell[:3] = self._get_var_and_scale('cell_lengths', check_frame)
+            unitcell[3:] = self._get_var_and_scale('cell_angles', check_frame)
             ts.dimensions = unitcell
         if self.convert_units:
             self.convert_pos_from_native(ts._pos)  # in-place !
@@ -673,6 +690,8 @@ class NCDFReader(base.ReaderBase):
             if self.periodic:
                 # in-place ! (only lengths)
                 self.convert_pos_from_native(ts.dimensions[:3])
+
+        del check_frame
         ts.frame = frame  # frame labels are 0-based
         self._current_frame = frame
         return ts
