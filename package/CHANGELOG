@@ -34,7 +34,7 @@ Fixes
    directly passing them. (Issue #3520, PR #5006)
 Enhancements
  * Allow NCDF reader to read Amber Restart Files with extension `.ncrst`
-   (Issue #5030, PR#5031)
+   (Issue #5030, PR #5031)
  * Improve parsing of topology information from LAMMPS dump files to allow
    reading of mass, charge and element attributes. (Issue #3449, PR #4995)
  * Added timestep support for XDR writers and readers (Issue #4905, PR #4908)
