@@ -359,7 +359,7 @@ class NCDFReader(base.ReaderBase):
     """Reader for `AMBER NETCDF format`_ (version 1.0).
 
     AMBER binary trajectories are automatically recognised by the
-    file extension ".ncdf", ".nc", and '.ncrst'.
+    file extension ".ncdf", ".nc", and ".ncrst".
 
     The number of atoms (`n_atoms`) does not have to be provided as it can
     be read from the trajectory. The trajectory reader can randomly access
@@ -664,7 +664,7 @@ class NCDFReader(base.ReaderBase):
         if self.is_restart:
             check_frame = ()  # AMBERRESTART convention files have dimensionless datasets
         else:
-            check_frame = int(frame)
+            check_frame = frame
 
         ts._pos[:] = self._get_var_and_scale('coordinates', check_frame)
         if self.has_time:
@@ -691,7 +691,6 @@ class NCDFReader(base.ReaderBase):
                 # in-place ! (only lengths)
                 self.convert_pos_from_native(ts.dimensions[:3])
 
-        del check_frame
         ts.frame = frame  # frame labels are 0-based
         self._current_frame = frame
         return ts
