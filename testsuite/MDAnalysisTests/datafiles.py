@@ -664,6 +664,8 @@ PRMcs = (_data_ref / "Amber/chitosan.prmtop").as_posix()
 
 PRMNCRST = (_data_ref / "Amber/ace_mbondi3.parm7").as_posix()
 TRJNCRST = (_data_ref / "Amber/ace_mbondi3.ncrst").as_posix()
+PRMNCRSTbox = (_data_ref / "Amber/ace_tip3p.parm7").as_posix()
+NCRSTbox = (_data_ref / "Amber/ace_tip3p.ncrst").as_posix()
 
 PRM_NCBOX = (_data_ref / "Amber/ace_tip3p.parm7").as_posix()
 TRJ_NCBOX = (_data_ref / "Amber/ace_tip3p.nc").as_posix()
