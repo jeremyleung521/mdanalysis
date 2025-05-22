@@ -88,6 +88,7 @@ import warnings
 import logging
 
 from .timestep import Timestep
+from .TRJ import NCDFMixin, NCDFPicklable
 from ..lib.util import store_init_arguments
 
 
@@ -155,7 +156,7 @@ class INPReader(base.SingleFrameReaderBase):
         return n_atoms
 
 
-class NCRSTReader(base.SingleFrameReaderBase):
+class NCRSTReader(base.SingleFrameReaderBase, NCDFMixin):
     """Reader for `AMBER NETCDF format`_ (version 1.0 rev C) restart files.
 
     This reader is a :class:`SingleFrameReaderBase` adaptation of the
@@ -206,7 +207,7 @@ class NCRSTReader(base.SingleFrameReaderBase):
     :class:`NCDFWriter`
 
 
-    .. versionadded: 2.5.0
+    .. versionadded: 2.10.0
     """
 
     format = ['NCRST', 'NCRESTRT', 'NCRST7']
@@ -245,189 +246,199 @@ class NCRSTReader(base.SingleFrameReaderBase):
         """Function to read NetCDF restart file and fill timestep
         """
         # Open netcdf file via context manager
-        with scipy.io.netcdf.netcdf_file(self.filename, mode='r',
-                                         mmap=self._mmap) as rstfile:
-            # Conventions should exist and contain the AMBERRESTART string
-            try:
-                conventions = rstfile.Conventions.decode('utf-8')
-                if not ('AMBERRESTART' in conventions.split(',') or
-                        'AMBERRESTART' in conventions.split()):
-                    errmsg = ("NetCDF restart file {0} does not conform to "
-                              "AMBER specifications, as detailed in "
-                              "http://ambermd.org/netcdf/nctraj.xhtml "
-                              "('AMBERRESTART' must be one of the tokens in "
-                              "attribute Conventions)".format(self.filename))
-                    logger.fatal(errmsg)
-                    raise TypeError(errmsg)
-            except AttributeError:
-                errmsg = ("NetCDF restart file {0} is missing  a "
-                          "Conventions value".format(self.filename))
-                raise ValueError(errmsg)
+        # ensure maskandscale is off so we don't end up double scaling
 
-            # ConventionVersion should exist and be equal to 1.0
-            try:
-                ConventionVersion = rstfile.ConventionVersion.decode('utf-8')
-                if not (ConventionVersion == self.version):
-                    wmsg = ("NCRST format is {0!s} but the reader implements "
-                            "format {1!s}".format(ConventionVersion,
-                             self.version))
-                    warnings.warn(wmsg)
-                    logger.warning(wmsg)
-            except AttributeError:
-                errmsg = ("NCDF restart file {0} is missing a "
-                          "ConventionVersion value".format(self.filename))
-                raise ValueError(errmsg)
+        with NCDFPicklable(self.filename, mode='r', mmap=self._mmap,
+                           maskandscale=False) as self.trjfile:
 
-            # The AMBER NetCDF standard enforces 64 bit offsets
-            if not rstfile.version_byte == 2:
-                errmsg = ("NetCDF restart file {0} does not conform to AMBER "
-                          "specifications, as detailed in "
-                          "http://ambermd.org/netcdf/nctraj.xhtml "
-                          "(NetCDF file does not use 64 bit offsets "
-                          "[version_byte = 2]) ".format(self.filename))
-                logger.fatal(errmsg)
-                raise TypeError(errmsg)
+            self._check_conventions()
 
-            # The specs require that dimensions->spatial == 3 exists
-            try:
-                if not rstfile.dimensions['spatial'] == 3:
-                    errmsg = "Incorrect spatial value for NCRST file"
-                    raise TypeError(errmsg)
-            except KeyError:
-                errmsg = ("NCDF restart file {0} does not contain spatial "
-                          "dimension".format(self.filename))
-                raise ValueError(errmsg)
+            self.n_frames = 1
 
-            # The specs define program and programVersion as required. Here we
-            # just warn the users instead of raising an Error.
-            if not (hasattr(rstfile, 'program') and
-                    hasattr(rstfile, 'programVersion')):
-                wmsg = ("This NCRST file {0} may not fully adhere to AMBER "
-                        "standards as either the `program` or "
-                        "`programVersion` attributes are missing".format(
-                        self.filename))
-                warnings.warn(wmsg)
-                logger.warning(wmsg)
+            # # Conventions should exist and contain the AMBERRESTART string
+            # try:
+            #     conventions = self.trjfile.Conventions.decode('utf-8')
+            #     if not ('AMBERRESTART' in conventions.split(',') or
+            #             'AMBERRESTART' in conventions.split()):
+            #         errmsg = ("NetCDF restart file {0} does not conform to "
+            #                   "AMBER specifications, as detailed in "
+            #                   "http://ambermd.org/netcdf/nctraj.xhtml "
+            #                   "('AMBERRESTART' must be one of the tokens in "
+            #                   "attribute Conventions)".format(self.filename))
+            #         logger.fatal(errmsg)
+            #         raise TypeError(errmsg)
+            # except AttributeError:
+            #     errmsg = ("NetCDF restart file {0} is missing  a "
+            #               "Conventions value".format(self.filename))
+            #     raise ValueError(errmsg)
 
-            # Note: SingleFrameReaderBase class sets parsed n_atoms value to
-            # self.n_atom which makes for a confusing check
-            try:
-                self.n_atoms = rstfile.dimensions['atom']
-                if self.n_atom is not None and self.n_atom != self.n_atoms:
-                    raise ValueError("Supplied n_atoms ({0}) != n_atoms from "
-                                     "NetCDF restart file ({1}). "
-                                     "Note: n_atoms can be None and then the "
-                                     "restart file value is used.".format(
-                                      self.n_atom, self.n_atoms))
-            except KeyError:
-                errmsg = ("NetCDF restart file {0} does not contain "
-                          "atom information ".format(self.filename))
-                logger.fatal(errmsg)
-                raise ValueError(errmsg)
+            # # ConventionVersion should exist and be equal to 1.0
+            # try:
+            #     ConventionVersion = self.trjfile.ConventionVersion.decode('utf-8')
+            #     if not (ConventionVersion == self.version):
+            #         wmsg = ("NCRST format is {0!s} but the reader implements "
+            #                 "format {1!s}".format(ConventionVersion,
+            #                  self.version))
+            #         warnings.warn(wmsg)
+            #         logger.warning(wmsg)
+            # except AttributeError:
+            #     errmsg = ("NCDF restart file {0} is missing a "
+            #               "ConventionVersion value".format(self.filename))
+            #     raise ValueError(errmsg)
 
-            # NetCDF file title is optional
-            try:
-                self.remarks = rstfile.title
-            except AttributeError:
-                self.remarks = ""
+            # # The AMBER NetCDF standard enforces 64 bit offsets
+            # if not self.trjfile.version_byte == 2:
+            #     errmsg = ("NetCDF restart file {0} does not conform to AMBER "
+            #               "specifications, as detailed in "
+            #               "http://ambermd.org/netcdf/nctraj.xhtml "
+            #               "(NetCDF file does not use 64 bit offsets "
+            #               "[version_byte = 2]) ".format(self.filename))
+            #     logger.fatal(errmsg)
+            #     raise TypeError(errmsg)
 
-            # Optional variables
-            self.has_velocities = 'velocities' in rstfile.variables
-            self.has_forces = 'forces' in rstfile.variables
-            self.periodic = 'cell_lengths' in rstfile.variables
+            # # The specs require that dimensions->spatial == 3 exists
+            # try:
+            #     if not self.trjfile.dimensions['spatial'] == 3:
+            #         errmsg = "Incorrect spatial value for NCRST file"
+            #         raise TypeError(errmsg)
+            # except KeyError:
+            #     errmsg = ("NCDF restart file {0} does not contain spatial "
+            #               "dimension".format(self.filename))
+            #     raise ValueError(errmsg)
 
-            # Set timestep
-            self.ts = self._Timestep(self.n_atoms,
-                                     velocities=self.has_velocities,
-                                     forces=self.has_forces,
-                                     reader=self,
-                                     **self._ts_kwargs)
+            # # The specs define program and programVersion as required. Here we
+            # # just warn the users instead of raising an Error.
+            # if not (hasattr(self.trjfile, 'program') and
+            #         hasattr(self.trjfile, 'programVersion')):
+            #     wmsg = ("This NCRST file {0} may not fully adhere to AMBER "
+            #             "standards as either the `program` or "
+            #             "`programVersion` attributes are missing".format(
+            #             self.filename))
+            #     warnings.warn(wmsg)
+            #     logger.warning(wmsg)
 
-            # Check for scale_factor attributes and store them
-            scale_factors = {'time': 1.0,
-                             'cell_lengths': 1.0,
-                             'cell_angles': 1.0,
-                             'coordinates': 1.0,
-                             'velocities': 1.0,
-                             'forces': 1.0}
+            # # Note: SingleFrameReaderBase class sets parsed n_atoms value to
+            # # self.n_atom which makes for a confusing check
+            # try:
+            #     self.n_atoms = self.trjfile.dimensions['atom']
+            #     if self.n_atom is not None and self.n_atom != self.n_atoms:
+            #         raise ValueError("Supplied n_atoms ({0}) != n_atoms from "
+            #                          "NetCDF restart file ({1}). "
+            #                          "Note: n_atoms can be None and then the "
+            #                          "restart file value is used.".format(
+            #                           self.n_atom, self.n_atoms))
+            # except KeyError:
+            #     errmsg = ("NetCDF restart file {0} does not contain "
+            #               "atom information ".format(self.filename))
+            #     logger.fatal(errmsg)
+            #     raise ValueError(errmsg)
 
-            for variable in rstfile.variables:
-                if hasattr(rstfile.variables[variable], 'scale_factor'):
-                    if variable in scale_factors:
-                        factor = rstfile.variables[variable].scale_factor
-                        scale_factors[variable] = factor
-                    else:
-                        errmsg = ("scale_factors for variable {0} are not "
-                                  "implemented".format(variable))
-                        raise NotImplementedError(errmsg)
+            # # NetCDF file title is optional
+            # try:
+            #     self.remarks = self.trjfile.title
+            # except AttributeError:
+            #     self.remarks = ""
 
-            # Note: unlike trajectories the AMBER NetCDF convention allows
-            # restart files to omit time when unecessary (i.e. minimizations)
-            try:
-                self._verify_units(rstfile.variables['time'].units,
-                                   'picosecond')
-                self.ts.time = (rstfile.variables['time'].getValue() *
-                                scale_factors['time'])
-            except KeyError:
-                # Warn the user and move on
-                wmsg = ("NCRestart file {0} does not contain time "
-                        "information. This should be expected if the file was "
-                        "not created from an MD trajectory (e.g. a "
-                        "minimization)".format(self.filename))
-                warnings.warn(wmsg)
-                logger.warning(wmsg)
+            # # Optional variables
+            # self.has_velocities = 'velocities' in self.trjfile.variables
+            # self.has_forces = 'forces' in self.trjfile.variables
+            # self.periodic = 'cell_lengths' in self.trjfile.variables
+
+            # # Set timestep
+            # self.ts = self._Timestep(self.n_atoms,
+            #                          velocities=self.has_velocities,
+            #                          forces=self.has_forces,
+            #                          reader=self,
+            #                          **self._ts_kwargs)
+
+            # # Check for scale_factor attributes and store them
+            # scale_factors = {'time': 1.0,
+            #                  'cell_lengths': 1.0,
+            #                  'cell_angles': 1.0,
+            #                  'coordinates': 1.0,
+            #                  'velocities': 1.0,
+            #                  'forces': 1.0}
+
+            # for variable in self.trjfile.variables:
+            #     if hasattr(self.trjfile.variables[variable], 'scale_factor'):
+            #         if variable in self.scale_factors:
+            #             factor = self.trjfile.variables[variable].scale_factor
+            #             self.scale_factors[variable] = factor
+            #         else:
+            #             errmsg = ("scale_factors for variable {0} are not "
+            #                       "implemented".format(variable))
+            #             raise NotImplementedError(errmsg)
+
+            # # Note: unlike trajectories the AMBER NetCDF convention allows
+            # # restart files to omit time when unecessary (i.e. minimizations)
+            # try:
+            #     self._verify_units(self.trjfile.variables['time'].units,
+            #                        'picosecond')
+            #     self.ts.time = (self.trjfile.variables['time'].getValue() *
+            #                     scale_factors['time'])
+            # except KeyError:
+            #     # Warn the user and move on
+            #     wmsg = ("NCRestart file {0} does not contain time "
+            #             "information. This should be expected if the file was "
+            #             "not created from an MD trajectory (e.g. a "
+            #             "minimization)".format(self.filename))
+            #     warnings.warn(wmsg)
+            #     logger.warning(wmsg)
 
             # Single frame so we assign it to 0
             self.ts.frame = 0
 
-            # Default to length units of Angstrom
-            try:
-                self._verify_units(rstfile.variables['coordinates'].units,
-                                   'angstrom')
-                self.ts._pos[:] = (rstfile.variables['coordinates'][:] *
-                                   scale_factors['coordinates'])
-            except KeyError:
-                # Technically coordinate information is not required, however
-                # the lack of it in a restart file is highly unlikely
-                errmsg = ("NetCDF restart file {0} is missing coordinate "
-                          "information ".format(self.filename))
-                logger.fatal(errmsg)
-                raise ValueError(errmsg)
+            # # Default to length units of Angstrom
+            # try:
+            #     self._verify_units(self.trjfile.variables['coordinates'].units,
+            #                        'angstrom')
+            #     self.ts._pos[:] = (self.trjfile.variables['coordinates'][:] *
+            #                        scale_factors['coordinates'])
+            # except KeyError:
+            #     # Technically coordinate information is not required, however
+            #     # the lack of it in a restart file is highly unlikely
+            #     errmsg = ("NetCDF restart file {0} is missing coordinate "
+            #               "information ".format(self.filename))
+            #     logger.fatal(errmsg)
+            #     raise ValueError(errmsg)
 
-            if self.has_velocities:
-                self._verify_units(rstfile.variables['velocities'].units,
-                                   'angstrom/picosecond')
-                self.ts._velocities[:] = (rstfile.variables['velocities'][:] *
-                                          scale_factors['velocities'])
 
-            # The presence of forces in an ncrst is rare but possible
-            if self.has_forces:
-                self._verify_units(rstfile.variables['forces'].units,
-                                   'kilocalorie/mole/angstrom')
-                self.ts._forces[:] = (rstfile.variables['forces'][:] *
-                                      scale_factors['forces'])
+            self._read_values(frame=())  # AMBERRESTART convention files have dimensionless datasets
 
-            # If false u.dimensions is set to [0., 0., 0., 0., 0., 0]
-            # Unlike the NCDFReader, `degrees` is not accepted
-            if self.periodic:
-                self._verify_units(rstfile.variables['cell_lengths'].units,
-                                   'angstrom')
-                self._verify_units(rstfile.variables['cell_angles'].units,
-                                   'degree')
-                self.ts._unitcell[:3] = (rstfile.variables['cell_lengths'][:] *
-                                         scale_factors['cell_lengths'])
-                self.ts._unitcell[3:] = (rstfile.variables['cell_angles'][:] *
-                                         scale_factors['cell_angles'])
+            # if self.has_velocities:
+            #     self._verify_units(self.trjfile.variables['velocities'].units,
+            #                        'angstrom/picosecond')
+            #     self.ts._velocities[:] = (self.trjfile.variables['velocities'][:] *
+            #                               scale_factors['velocities'])
 
-            # Convert units inplace
-            if self.convert_units:
-                self.convert_pos_from_native(self.ts._pos)
-                self.convert_time_from_native(self.ts.time)
-                if self.has_velocities:
-                    self.convert_velocities_from_native(self.ts._velocities,
-                                                        inplace=True)
-                if self.has_forces:
-                    self.convert_forces_from_native(self.ts._forces,
-                                                    inplace=True)
-                if self.periodic:
-                    self.convert_pos_from_native(self.ts._unitcell[:3])
+            # # The presence of forces in an ncrst is rare but possible
+            # if self.has_forces:
+            #     self._verify_units(self.trjfile.variables['forces'].units,
+            #                        'kilocalorie/mole/angstrom')
+            #     self.ts._forces[:] = (self.trjfile.variables['forces'][:] *
+            #                           scale_factors['forces'])
+
+            # # If false u.dimensions is set to [0., 0., 0., 0., 0., 0]
+            # # Unlike the NCDFReader, `degrees` is not accepted
+            # if self.periodic:
+            #     self._verify_units(self.trjfile.variables['cell_lengths'].units,
+            #                        'angstrom')
+            #     self._verify_units(self.trjfile.variables['cell_angles'].units,
+            #                        'degree')
+            #     self.ts._unitcell[:3] = (self.trjfile.variables['cell_lengths'][:] *
+            #                              scale_factors['cell_lengths'])
+            #     self.ts._unitcell[3:] = (self.trjfile.variables['cell_angles'][:] *
+            #                              scale_factors['cell_angles'])
+
+            # # Convert units inplace
+            # if self.convert_units:
+            #     self.convert_pos_from_native(self.ts._pos)
+            #     self.convert_time_from_native(self.ts.time)
+            #     if self.has_velocities:
+            #         self.convert_velocities_from_native(self.ts._velocities,
+            #                                             inplace=True)
+            #     if self.has_forces:
+            #         self.convert_forces_from_native(self.ts._forces,
+            #                                         inplace=True)
+            #     if self.periodic:
+            #         self.convert_pos_from_native(self.ts._unitcell[:3])

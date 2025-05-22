@@ -193,6 +193,8 @@ __all__ = [
     "PRMcs",  # Amber (format, Issue 1331)
     "PRMNCRST",  # Amber topology for ncrst with positions/forces/velocities
     "TRJNCRST",  # Amber ncrst with positions/forces/velocties
+    "PRMNCRSTbox",
+    "NCRSTbox", 
     "PRM_NCBOX",
     "TRJ_NCBOX",  # Amber parm7 + nc w/ pos/forces/vels/box
     "PRMNEGATIVE",  # Amber negative ATOMIC_NUMBER (Issue 2306)
