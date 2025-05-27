@@ -94,7 +94,6 @@ from .TRJ import NCDFPicklable, NCDFMixin
 logger = logging.getLogger("MDAnalysis.coordinates.AMBER")
 
 
-
 class INPReader(base.SingleFrameReaderBase):
     """Reader for Amber restart files.
 
@@ -108,8 +107,8 @@ class INPReader(base.SingleFrameReaderBase):
 
     """
 
-    format = ['INPCRD', 'RESTRT', 'RST7']
-    units = {'length': 'Angstrom'}
+    format = ["INPCRD", "RESTRT", "RST7"]
+    units = {"length": "Angstrom"}
 
     def _read_first_frame(self):
         # Read header
@@ -209,52 +208,60 @@ class NCRSTReader(base.SingleFrameReaderBase, NCDFMixin):
     .. versionadded: 2.10.0
     """
 
-    format = ['NCRST', 'NCRESTRT', 'NCRST7']
+    format = ["NCRST", "NCRESTRT", "NCRST7"]
     version = "1.0"
-    units = {'time': 'ps',
-             'length': 'Angstrom',
-             'velocity': 'Angstrom/ps',
-             'force': 'kcal/(mol*Angstrom)'}
-
+    units = {
+        "time": "ps",
+        "length": "Angstrom",
+        "velocity": "Angstrom/ps",
+        "force": "kcal/(mol*Angstrom)",
+    }
 
     _Timestep = Timestep
 
     @store_init_arguments
-    def __init__(self, filename, n_atoms=None, convert_units=None, mmap=None,
-                 **kwargs):
+    def __init__(
+        self, filename, n_atoms=None, convert_units=None, mmap=None, **kwargs
+    ):
         # Assign input mmap value
         self._mmap = mmap
 
-        super(NCRSTReader, self).__init__(filename, convert_units, n_atoms,
-                                          **kwargs)
+        super(NCRSTReader, self).__init__(
+            filename, convert_units, n_atoms, **kwargs
+        )
 
     @staticmethod
     def parse_n_atoms(filename, **kwargs):
         with scipy.io.netcdf_file(filename, mmap=None) as f:
-            n_atoms = f.dimensions['atom']
+            n_atoms = f.dimensions["atom"]
         return n_atoms
 
     @staticmethod
     def _verify_units(eval_units, expected_units):
-        if eval_units.decode('utf-8') != expected_units:
-            errmsg = ("NCRSTReader currently assumes that the trajectory "
-                      "was written in units of {0} instead of {1}".format(
-                       eval_units.decode('utf-8'), expected_units))
+        if eval_units.decode("utf-8") != expected_units:
+            errmsg = (
+                "NCRSTReader currently assumes that the trajectory "
+                "was written in units of {0} instead of {1}".format(
+                    eval_units.decode("utf-8"), expected_units
+                )
+            )
             raise NotImplementedError(errmsg)
 
     def _read_first_frame(self):
-        """Function to read NetCDF restart file and fill timestep
-        """
+        """Function to read NetCDF restart file and fill timestep"""
         # Open netcdf file via context manager
         # ensure maskandscale is off so we don't end up double scaling
 
-        with NCDFPicklable(self.filename, mode='r', mmap=self._mmap,
-                           maskandscale=False) as self.trjfile:
+        with NCDFPicklable(
+            self.filename, mode="r", mmap=self._mmap, maskandscale=False
+        ) as self.trjfile:
 
             self._check_conventions(n_atoms=self.n_atoms)
 
             self.n_frames = 1
 
-            self._read_values(frame=())  # AMBERRESTART convention files have dimensionless datasets
+            self._read_values(
+                frame=()
+            )  # AMBERRESTART convention files have dimensionless datasets
 
-            self.ts.frame = 0 # 0-indexed 
+            self.ts.frame = 0  # 0-indexed
