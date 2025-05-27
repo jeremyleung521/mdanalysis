@@ -390,7 +390,7 @@ class TestNCDFReader4(object):
             u2 = mda.Universe(CPPTRAJ_TRAJ_TOP, CPPTRAJ_TRAJ)
 
 
-#class TestNCDFReader5(object):
+# class TestNCDFReader5(object):
 #    """NCRST Restart File with positions and forces, exported by CPPTRAJ.
 #
 #    Contributed by Jeremy M. G. Leung
