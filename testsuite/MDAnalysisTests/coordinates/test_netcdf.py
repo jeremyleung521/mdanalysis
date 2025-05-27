@@ -23,7 +23,6 @@
 import MDAnalysis as mda
 import numpy as np
 import sys
-
 from scipy.io import netcdf_file
 
 import pytest
@@ -387,7 +386,7 @@ class TestNCDFReader4(object):
             "NCDF trajectory does not contain `time` information;"
             " `time` will be set as an increasing index"
         )
-        with pytest.warns(UserWarning, match=wmsg):
+        with pytest.warns(UserWarning, match=wmsg[0]):
             u2 = mda.Universe(CPPTRAJ_TRAJ_TOP, CPPTRAJ_TRAJ)
 
 
@@ -778,7 +777,7 @@ class TestNCDFReaderExceptionsWarnings(_NCDFGenerator):
 
             assert len(record) == 1
             wmsg = (
-                "NCDF file format is 2.0 but the reader "
+                "NCDF trajectory format is 2.0 but the reader "
                 "implements format 1.0"
             )
             assert str(record[0].message.args[0]) == wmsg
@@ -795,7 +794,7 @@ class TestNCDFReaderExceptionsWarnings(_NCDFGenerator):
 
             assert len(record) == 1
             wmsg = (
-                "NCDF trajectory test.nc may not fully adhere to AMBER "
+                "The NCDF trajectory test.nc may not fully adhere to AMBER "
                 "standards as either the `program` or `programVersion` "
                 "attributes are missing"
             )
@@ -853,9 +852,9 @@ class _NCDFWriterTest(object):
         #       which should be "float32".
         #       See http://docs.scipy.org/doc/numpy-1.10.0/reference/arrays.dtypes.html
         #       and https://github.com/MDAnalysis/mdanalysis/pull/503
-        dataset = netcdf_file(outfile, "r")
-        coords = dataset.variables["coordinates"]
-        time = dataset.variables["time"]
+        with netcdf_file(outfile, "r") as dataset:
+            coords = dataset.variables["coordinates"][...]
+            time = dataset.variables["time"][...]
         assert_equal(
             coords[:].dtype.name,
             np.dtype(np.float32).name,

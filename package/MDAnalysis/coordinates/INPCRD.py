@@ -83,14 +83,13 @@ types and will raise a :exc:`NotImplementedError` if anything else is detected.
 """
 
 from . import base
-import scipy.io.netcdf
 import warnings
 import logging
+from scipy.io import netcdf_file
 
 from .timestep import Timestep
-from .TRJ import NCDFMixin, NCDFPicklable
 from ..lib.util import store_init_arguments
-
+from .TRJ import NCDFPicklable, NCDFMixin
 
 logger = logging.getLogger("MDAnalysis.coordinates.AMBER")
 
@@ -225,12 +224,13 @@ class NCRSTReader(base.SingleFrameReaderBase, NCDFMixin):
                  **kwargs):
         # Assign input mmap value
         self._mmap = mmap
+
         super(NCRSTReader, self).__init__(filename, convert_units, n_atoms,
                                           **kwargs)
 
     @staticmethod
     def parse_n_atoms(filename, **kwargs):
-        with scipy.io.netcdf.netcdf_file(filename, mmap=None) as f:
+        with scipy.io.netcdf_file(filename, mmap=None) as f:
             n_atoms = f.dimensions['atom']
         return n_atoms
 
@@ -251,12 +251,10 @@ class NCRSTReader(base.SingleFrameReaderBase, NCDFMixin):
         with NCDFPicklable(self.filename, mode='r', mmap=self._mmap,
                            maskandscale=False) as self.trjfile:
 
-            self._check_conventions()
+            self._check_conventions(n_atoms=self.n_atoms)
 
-            self.n_frames = 0
-
-            # Single frame so we assign it to 0
-            self.ts.frame = 0
+            self.n_frames = 1
 
             self._read_values(frame=())  # AMBERRESTART convention files have dimensionless datasets
 
+            self.ts.frame = 0 # 0-indexed 
