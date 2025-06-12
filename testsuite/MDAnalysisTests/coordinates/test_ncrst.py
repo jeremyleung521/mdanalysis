@@ -327,7 +327,7 @@ class TestNCRSTReaderExceptionsWarnings(_NCRSTGenerator):
 
             assert len(record) == 1
             wmsg = (
-                "This NCDF restart file {0} may not fully adhere to AMBER "
+                "The NCDF restart file {0} may not fully adhere to AMBER "
                 "standards as either the `program` or `programVersion` "
                 "attributes are missing".format(params["filename"])
             )

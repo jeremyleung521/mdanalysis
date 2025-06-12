@@ -1227,9 +1227,12 @@ class NCDFWriter(base.WriterBase):
         self.curr_frame += 1
 
     def close(self):
-        if self.trjfile is not None:
-            self.trjfile.close()
-            self.trjfile = None
+        try:
+            if self.trjfile is not None:
+                self.trjfile.close()
+                self.trjfile = None
+        except AttributeError:
+            pass
 
 
 class NCDFPicklable(netcdf_file):
