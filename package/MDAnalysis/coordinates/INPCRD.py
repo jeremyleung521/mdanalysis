@@ -102,7 +102,7 @@ class INPReader(base.SingleFrameReaderBase):
     * Box information is not read (or checked for).
     * Velocities are currently *not supported*.
 
-    .. versionchanged: 0.20.0
+    .. versionchanged: 2.10.0
        Now automatically detects files with .rst7 extension.
 
     """
