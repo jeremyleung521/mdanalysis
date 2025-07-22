@@ -181,7 +181,8 @@ class NCRSTReader(base.SingleFrameReaderBase, NCDFMixin):
     ``[0,0,0,0,0,0]``).
 
     Support for the *mmap* keyword is available as detailed
-    in :class:`NCDFReader` and :mod:`scipy.io.netcdf.netcdf_file`. The use of
+    in :class:`~MDAnalysis.coordinates.TRJ.NCDFReader` and
+    :mod:`scipy.io.netcdf.netcdf_file`. The use of
     ``mmap=True`` leads to around a 2x read speed improvement in a ~ 1 million
     atom system (AMBER STMV benchmark). As per the :class:`NCDFReader`, the
     default behaviour is ``mmap=None``, which means that the default behaviour
