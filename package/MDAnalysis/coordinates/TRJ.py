@@ -435,23 +435,6 @@ class NCDFMixin():
                       "information".format(file_format, self.filename))
             raise ValueError(errmsg) from None
 
-        # try:
-        #     self.n_frames = self.trjfile.dimensions['frame']
-        #     # example trajectory when read with scipy.io.netcdf has
-        #     # dimensions['frame'] == None (indicating a record dimension that
-        #     # can grow) whereas if read with netCDF4 I get
-        #     # len(dimensions['frame']) ==  10: in any case, we need to get
-        #     # the number of frames from somewhere such as the time variable:
-        #     if self.n_frames is None:
-        #         self.n_frames = self.trjfile.variables['coordinates'].shape[0]
-        # except KeyError:
-        #     if self.is_restart:
-        #          self.n_frames = 1
-        #     else:
-        #         errmsg = ("NCDF {file_format} {self.filename} does not contain "
-        #                   "frame information").format
-        #         raise ValueError(errmsg) from None
-
         try:
             self.remarks = self.trjfile.title
         except AttributeError:
