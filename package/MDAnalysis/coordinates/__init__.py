@@ -215,7 +215,7 @@ also recognized when they are compressed with :program:`gzip` or
    |               |           |       | velocities). Module :mod:`MDAnalysis.coordinates.TRJ`|
    +---------------+-----------+-------+------------------------------------------------------+
    | AMBER         | ncrst,    |  r    | binary (NetCDF) restart file                         |
-   |               | ncrestrt, |       | Module :mod:`MDAnalysis.coordinates.INPCRD           |
+   |               | ncrestrt, |       | Module :mod:`MDAnalysis.coordinates.INPCRD`          |
    |               | ncrst7    |       |                                                      |
    +---------------+-----------+-------+------------------------------------------------------+
    | Brookhaven    | pdb/ent   |  r/w  | a relaxed PDB format (as used in MD simulations)     |

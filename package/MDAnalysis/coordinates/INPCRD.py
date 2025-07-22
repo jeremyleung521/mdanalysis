@@ -22,7 +22,7 @@
 #
 
 
-"""AMBER restart files in MDAnalysis --- :mod:`MDAnalysis.coordinates.INPCRD`
+"""AMBER coordinate/restart files in MDAnalysis --- :mod:`MDAnalysis.coordinates.INPCRD`
 ================================================================================
 
 AMBER_ can write :ref:`ASCII restart<ascii-restart>` ("inpcrd") and
@@ -76,7 +76,7 @@ types and will raise a :exc:`NotImplementedError` if anything else is detected.
 .. Links
 
 .. _AMBER: http://ambermd.org
-.. _AMBER INPCRD FORMAT: http://ambermd.org/formats.html#restart
+.. _AMBER INPCRD FORMAT: https://ambermd.org/FileFormats.php#restart
 .. _AMBER netcdf: http://ambermd.org/netcdf/nctraj.xhtml
 .. _NetCDF: http://www.unidata.ucar.edu/software/netcdf
 
@@ -158,7 +158,7 @@ class NCRSTReader(base.SingleFrameReaderBase, NCDFMixin):
     """Reader for `AMBER NETCDF format`_ (version 1.0 rev C) restart files.
 
     This reader is a :class:`SingleFrameReaderBase` adaptation of the
-    :class:`NCDFReader` AMBER NETCDF trajectory reader.
+    :class:`~MDAnalysis.coordinates.TRJ.NCDFReader` AMBER NETCDF trajectory reader.
 
     AMBER binary restart files are automatically recognised by the file
     extensions ".ncrst", ".ncrestrt", and ".ncrst7".
@@ -201,8 +201,8 @@ class NCRSTReader(base.SingleFrameReaderBase, NCDFMixin):
 
     See Also
     --------
-    :class:`NCDFReader`
-    :class:`NCDFWriter`
+    :class:`~MDAnalysis.coordinates.TRJ.NCDFReader`
+    :class:`~MDAnalysis.coordinates.TRJ.NCDFWriter`
 
 
     .. versionadded: 2.10.0
