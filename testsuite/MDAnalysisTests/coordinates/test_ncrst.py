@@ -147,16 +147,6 @@ class TestReadACEBox(_NCRestartTest):
         assert_almost_equal(expected, ag.positions, self.prec)
 
 
-#    def test_velocities(self, universe, selstr, expected):
-#        ag = universe.select_atoms(selstr)
-#        assert_almost_equal(expected, ag.velocities, self.prec)
-#
-#    def test_forces(self, universe, selstr, expected):
-#        ag = universe.select_atoms(selstr)
-#        # We convert from kj back to the original kcal value
-#        assert_almost_equal(expected, ag.forces * 4.184, self.prec)
-
-
 class _NCRSTGenerator(object):
     """A basic modular ncrst writer based on :class:`NCDFWriter`"""
 
@@ -292,17 +282,6 @@ class TestNCRSTReaderExceptionsWarnings(_NCRSTGenerator):
             self.create_ncrst(params)
             with pytest.raises(NotImplementedError):
                 NCRSTReader(params["filename"])
-
-    # @pytest.mark.parametrize('value', [
-    #     'time', 'coordinates', 'spatial',
-    #     'velocities', 'forces'
-    # ])
-    # def test_scale_factor(self, tmpdir, value):
-    #     params = self.gen_params(key='scale_factor', value=value)
-    #     with tmpdir.as_cwd():
-    #         self.create_ncrst(params)
-    #         with pytest.raises(NotImplementedError):
-    #             NCRSTReader(params['filename'])
 
     def test_conventionversion_warn(self, tmpdir):
         params = self.gen_params(key="ConventionVersion", value="2.0")
