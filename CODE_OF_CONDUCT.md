@@ -6,23 +6,24 @@ project, MDAnalysis follows the [NumFOCUS Code of Conduct][NF-conduct].
 
 **Table of Contents**
 
-- [NumFOCUS Code of Conduct](#numfocus-code-of-conduct)
+- [MDAnalysis Code of Conduct](#numfocus-code-of-conduct)
 - [How to Report](#how-to-report)
 - [Who Will Receive Your Report](#who-will-receive-your-report)
 - [Diversity, Equity, and Inclusion Statement](#diversity-equity-and-inclusion-statement)
 - [Acknowledgment](#acknowledgment)
 
-## NUMFOCUS CODE OF CONDUCT
+## MDANALYSIS CODE OF CONDUCT
 You can find the whole document here: https://numfocus.org/code-of-conduct.
 
 ### THE SHORT VERSION
-NumFOCUS is dedicated to providing a harassment-free community for everyone,
+MDAnalysis and NumFOCUS are dedicated to providing a harassment-free community for everyone,
 regardless of gender, sexual orientation, gender identity and expression, disability,
 physical appearance, body size, race, or religion. We do not tolerate harassment of
 community members in any form.
 
 Be kind to others. Do not insult or put down others. Behave professionally. Remember
-that harassment and sexist, racist, or exclusionary jokes are not appropriate for NumFOCUS.
+that harassment and sexist, racist, or exclusionary jokes are not appropriate for MDAnalysis
+or NumFOCUS.
 
 All communication should be appropriate for a professional audience including people of
 many different backgrounds. Sexual language and imagery is not appropriate.
