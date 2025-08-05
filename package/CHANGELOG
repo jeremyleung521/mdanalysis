@@ -16,11 +16,14 @@ The rules for this file:
 -------------------------------------------------------------------------------
 ??/??/?? IAlibay, orbeckst, BHM-Bob, TRY-ER, Abdulrahman-PROG, pbuslaev,
          yuxuanzhuang, yuyuan871111, tanishy7777, jpkrowe, tulga-rdn,
-         Gareth-elliott, hmacdope, tylerjereddy, cbouy, jeremyleung521
+         Gareth-elliott, hmacdope, tylerjereddy, cbouy, talagayev,
+         jeremyleung521
 
  * 2.10.0
 
 Fixes
+ * Fix DCDWriter to correctly write unit cell angles as cosines following 
+   NAMD/VMD convention (Issue #5069)
  * Fixed an integer overflow in large DCD file seeks on Windows
    (Issue #4879, PR #5086)
  * Fix compile failure due to numpy issues in transformations.c (Issue #5061, PR #5068)
@@ -41,6 +44,9 @@ Fixes
 Enhancements
  * Allow NCDF reader to read Amber Restart Files with extension `.ncrst`
    (Issue #5030, PR #5031)
+ * Support has been added for reading positions and velocities
+   from GROMACS TPR files, between GROMACS version 4.x and 2025
+   (Issue #464, PR #4873)
  * Added `TemplateInferrer` and `RDKitInferrer` dataclasses to the
    `RDKitInferring` module to be used by the RDKit converter. (PR #4305)
  * Improve speed of GROMOS11 (TRC) reader (Issue #5079, PR #5080)
