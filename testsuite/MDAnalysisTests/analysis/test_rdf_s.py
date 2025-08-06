@@ -27,6 +27,7 @@ from numpy.testing import assert_allclose, assert_almost_equal
 
 import MDAnalysis as mda
 from MDAnalysis.analysis.rdf import InterRDF_s, InterRDF, nested_array_sum
+from MDAnalysisTests.util import distopia_conditional_backend
 
 from MDAnalysisTests.datafiles import GRO_MEMPROT, XTC_MEMPROT
 
@@ -175,6 +176,12 @@ def test_rdf_attr_warning(rdf, attr):
         getattr(rdf, attr) is rdf.results[attr]
 
 
+@pytest.mark.parametrize("backend", distopia_conditional_backend())
+def test_backend(u, sels, backend):
+    rdf = InterRDF_s(u, sels, norm="none", backend=backend).run()
+    assert_allclose(max(rdf.results.rdf[0][0][0]), 0.6)
+
+
 def test_nested_array_sum():
     arr_1 = np.random.rand(1, 2, 75)
     arr_2 = np.random.rand(2, 2, 75)
@@ -199,7 +206,6 @@ def test_nested_array_sum():
 
 
 # tests for parallelization
-
 
 @pytest.mark.parametrize(
     "classname,is_parallelizable",

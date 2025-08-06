@@ -24,6 +24,7 @@ import pytest
 
 import MDAnalysis as mda
 from MDAnalysis.analysis.rdf import InterRDF
+from MDAnalysisTests.util import distopia_conditional_backend
 
 from MDAnalysisTests.datafiles import two_water_gro
 
@@ -156,8 +157,14 @@ def test_unknown_norm(sels):
         InterRDF(s1, s2, sels, norm="foo")
 
 
-# tests for parallelization
+@pytest.mark.parametrize("backend", distopia_conditional_backend())
+def test_norm(sels, backend):
+    s1, s2 = sels
+    rdf = InterRDF(s1, s2, norm="none", backend=backend).run()
+    assert_allclose(max(rdf.results.rdf), 4)
 
+
+# tests for parallelization
 
 @pytest.mark.parametrize(
     "classname,is_parallelizable",
