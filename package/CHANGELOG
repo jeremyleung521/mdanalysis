@@ -17,7 +17,7 @@ The rules for this file:
 ??/??/?? IAlibay, orbeckst, BHM-Bob, TRY-ER, Abdulrahman-PROG, pbuslaev,
          yuxuanzhuang, yuyuan871111, tanishy7777, jpkrowe, tulga-rdn,
          Gareth-elliott, hmacdope, tylerjereddy, cbouy, talagayev,
-         jeremyleung521
+         DrDomenicoMarson, jeremyleung521
 
  * 2.10.0
 
@@ -70,6 +70,8 @@ Enhancements
    (PR #5038)
  * Moved distopia checking function to common import location in
    MDAnalysisTest.util (PR #5038)
+ * Enables parallelization for `analysis.polymer.PersistenceLength` (Issue #4671, PR #5074)
+
 
 Changes
  * Refactored the RDKit converter code to move the inferring code in a separate
