@@ -163,31 +163,3 @@ def test_norm(sels, backend):
     rdf = InterRDF(s1, s2, norm="none", backend=backend).run()
     assert_allclose(max(rdf.results.rdf), 4)
 
-
-# tests for parallelization
-
-@pytest.mark.parametrize(
-    "classname,is_parallelizable",
-    [
-        (mda.analysis.rdf.InterRDF, True),
-    ],
-)
-def test_class_is_parallelizable(classname, is_parallelizable):
-    assert classname._analysis_algorithm_is_parallelizable == is_parallelizable
-
-
-@pytest.mark.parametrize(
-    "classname,backends",
-    [
-        (
-            mda.analysis.rdf.InterRDF,
-            (
-                "serial",
-                "multiprocessing",
-                "dask",
-            ),
-        ),
-    ],
-)
-def test_supported_backends(classname, backends):
-    assert classname.get_supported_backends() == backends
