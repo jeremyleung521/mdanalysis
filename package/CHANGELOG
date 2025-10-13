@@ -43,6 +43,8 @@ Fixes
  * Fixes the benchmark `SimpleRmsBench` in `benchmarks/analysis/rms.py`
    by changing the way weights for RMSD are calculated, instead of
    directly passing them. (Issue #3520, PR #5006)
+ * `analysis.polymer.sort_backbone` is now working for discontinuous polymers
+    and does not result in an infinite loop (Issue #5112, PR #5113)
 
 Enhancements
  * Added support for reading and processing streamed data in `coordinates.base`
@@ -89,6 +91,7 @@ Changes
  * Removed undocumented and unused attribute
    `analysis.lineardensity.LinearDensity.totalmass` (PR #5007)
  * Remove `default` channel from RTD conda env. (Issue # 5036, PR # 5037)   
+
 
 Deprecations
  * The RDKit converter parameter `NoImplicit` has been deprecated in favour of
