@@ -16,8 +16,8 @@ The rules for this file:
 -------------------------------------------------------------------------------
 ??/??/?? IAlibay, orbeckst, BHM-Bob, TRY-ER, Abdulrahman-PROG, pbuslaev,
          yuxuanzhuang, yuyuan871111, tanishy7777, tulga-rdn, Gareth-elliott,
-         hmacdope, tylerjereddy, cbouy, talagayev, DrDomenicoMarson, amruthesht,
-         p-j-smith
+         hmacdope, tylerjereddy, cbouy, talagayev, DrDomenicoMarson, amruthesht, 
+         p-j-smith, gitzhangch
 
 
  * 2.10.0
@@ -47,6 +47,9 @@ Fixes
     and does not result in an infinite loop (Issue #5112, PR #5113)
 
 Enhancements
+ * Improved performance of `analysis.rdf.InterRDF_s` > 20-fold  
+   by using vectorized NumPy calculations. (Issue #5067, PR #5073)
+ * Parallelize `analysis.rdf.InterRDF` and `analysis.rdf.InterRDF` (Issue #4675)   
  * Support for Python 3.14 was added (PR #5121).
  * Added support for reading and processing streamed data in `coordinates.base`
    with new `StreamFrameIteratorSliced` and `StreamReaderBase` (Issue #4827, PR #4923)
@@ -125,7 +128,6 @@ Enhancements
  * Enable parallelization for analysis.nucleicacids.NucPairDist (Issue #4670)
  * Add check and warning for empty (all zero) coordinates in RDKit converter (PR #4824)
  * Added `precision` for XYZWriter (Issue #4775, PR #4771)
- * Parallelize `analysis.rdf.InterRDF` and `analysis.rdf.InterRDF` (Issue #4675)
  * Added `precision` for XYZWriter (Issue #4775, PR #4771)
  * Add check and warning for empty (all zero) coordinates in RDKit converter
    (PR #4824)
