@@ -14,10 +14,27 @@ The rules for this file:
 
 
 -------------------------------------------------------------------------------
+ * 2.11.0
+??/??/?? jeremyleung521
+
+Fixes
+ * 
+
+Enhancement
+ * Allow NCDF reader to read Amber Restart Files with extension `.ncrst`
+   (Issue #5030, PR #5031)
+
+Changes
+ * 
+
+Deprecations
+ *
+
+
 ??/??/?? IAlibay, orbeckst, BHM-Bob, TRY-ER, Abdulrahman-PROG, pbuslaev,
          yuxuanzhuang, yuyuan871111, tanishy7777, jpkrowe, tulga-rdn,
          Gareth-elliott, hmacdope, tylerjereddy, cbouy, talagayev,
-         DrDomenicoMarson, amruthesht, p-j-smith, jeremyleung521
+         DrDomenicoMarson, amruthesht, p-j-smith
 
 
  * 2.10.0
@@ -45,8 +62,6 @@ Fixes
    directly passing them. (Issue #3520, PR #5006)
 
 Enhancements
- * Allow NCDF reader to read Amber Restart Files with extension `.ncrst`
-   (Issue #5030, PR #5031)
  * Added support for reading and processing streamed data in `coordinates.base`
    with new `StreamFrameIteratorSliced` and `StreamReaderBase` (Issue #4827, PR #4923)
  * New coordinate reader: Added `IMDReader` for reading real-time streamed
