@@ -20,7 +20,7 @@ The rules for this file:
 Fixes
  * 
 
-Enhancement
+Enhancements
  * Allow NCDF reader to read Amber Restart Files with extension `.ncrst`
    (Issue #5030, PR #5031)
 
