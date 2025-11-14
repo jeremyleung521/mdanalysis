@@ -14,13 +14,13 @@ The rules for this file:
 
 
 -------------------------------------------------------------------------------
-??/??/?? IAlibay
+??/??/?? IAlibay, orbeckst, marinegor
 
  * 2.11.0
 
 Fixes
-
-Enhancements
+ * Fixes incorrect assignment of secondary structure to proline residues in
+   DSSP by porting upstream PyDSSP 0.9.1 fix (Issue #4913)
 
 Changes
 
