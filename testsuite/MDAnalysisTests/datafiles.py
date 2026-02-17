@@ -97,6 +97,7 @@ __all__ = [
     "TPR_xvf",
     "TRR_xvf",  # Gromacs coords/veloc/forces (cobrotoxin, OPLS-AA, Gromacs 4.5.5 tpr)
     "TPR_xvf_2024_4",
+    "TPR_gh_5145",  # regression guard for gh-5145
     "H5MD_xvf",  # TPR_xvf + TRR_xvf converted to h5md format
     "H5MD_energy",  # H5MD trajectory with observables/atoms/energy
     "H5MD_malformed",  # H5MD trajectory with malformed observable group
@@ -135,6 +136,7 @@ __all__ = [
     "TPR2024",
     "TPR2024_4",
     "TPR2025_0",
+    "TPR2026_0",
     "TPR510_bonded",
     "TPR2016_bonded",
     "TPR2018_bonded",
@@ -150,6 +152,7 @@ __all__ = [
     "TPR2024_bonded",
     "TPR2024_4_bonded",
     "TPR2025_0_bonded",
+    "TPR2026_0_bonded",
     "TPR_EXTRA_2021",
     "TPR_EXTRA_2020",
     "TPR_EXTRA_2018",
@@ -160,7 +163,9 @@ __all__ = [
     "TPR_EXTRA_2024",
     "TPR_EXTRA_2024_4",
     "TPR_EXTRA_2025_0",
+    "TPR_EXTRA_2026_0",
     "TPR_NNPOT_2025_0",
+    "TPR_NNPOT_2026_0",
     "PDB_sub_sol",
     "PDB_sub_dry",  # TRRReader sub selection
     "TRR_sub_sol",
@@ -533,6 +538,7 @@ TNG_traj_vels_forces = (
 PDB_xvf = (_data_ref / "cobrotoxin.pdb").as_posix()
 TPR_xvf = (_data_ref / "cobrotoxin.tpr").as_posix()
 TPR_xvf_2024_4 = (_data_ref / "cobrotoxin_2024_4.tpr").as_posix()
+TPR_gh_5145 = (_data_ref / "281_small.tpr").as_posix()
 TRR_xvf = (_data_ref / "cobrotoxin.trr").as_posix()
 H5MD_xvf = (_data_ref / "cobrotoxin.h5md").as_posix()
 H5MD_energy = (_data_ref / "cu.h5md").as_posix()
@@ -569,6 +575,7 @@ TPR2023 = (_data_ref / "tprs/2lyz_gmx_2023.tpr").as_posix()
 TPR2024 = (_data_ref / "tprs/2lyz_gmx_2024.tpr").as_posix()
 TPR2024_4 = (_data_ref / "tprs/2lyz_gmx_2024_4.tpr").as_posix()
 TPR2025_0 = (_data_ref / "tprs/2lyz_gmx_2025_0.tpr").as_posix()
+TPR2026_0 = (_data_ref / "tprs/2lyz_gmx_2026_0.tpr").as_posix()
 # double precision
 TPR455Double = (_data_ref / "tprs/drew_gmx_4.5.5.double.tpr").as_posix()
 TPR460 = (_data_ref / "tprs/ab42_gmx_4.6.tpr").as_posix()
@@ -601,7 +608,11 @@ TPR2023_bonded = (_data_ref / "tprs/all_bonded/dummy_2023.tpr").as_posix()
 TPR2024_bonded = (_data_ref / "tprs/all_bonded/dummy_2024.tpr").as_posix()
 TPR2024_4_bonded = (_data_ref / "tprs/all_bonded/dummy_2024_4.tpr").as_posix()
 TPR2025_0_bonded = (_data_ref / "tprs/all_bonded/dummy_2025_0.tpr").as_posix()
+TPR2026_0_bonded = (_data_ref / "tprs/all_bonded/dummy_2026_0.tpr").as_posix()
 # all interactions
+TPR_EXTRA_2026_0 = (
+    _data_ref / "tprs/virtual_sites/extra-interactions-2026_0.tpr"
+).as_posix()
 TPR_EXTRA_2025_0 = (
     _data_ref / "tprs/virtual_sites/extra-interactions-2025_0.tpr"
 ).as_posix()
@@ -634,6 +645,7 @@ TPR_EXTRA_407 = (
 ).as_posix()
 # ALA dipeptide with neural network potential and a few other options
 TPR_NNPOT_2025_0 = (_data_ref / "tprs/ala_nnpot_gmx_2025_0.tpr").as_posix()
+TPR_NNPOT_2026_0 = (_data_ref / "tprs/ala_nnpot_gmx_2026_0.tpr").as_posix()
 
 XYZ_psf = (_data_ref / "2r9r-1b.psf").as_posix()
 XYZ_bz2 = (_data_ref / "2r9r-1b.xyz.bz2").as_posix()

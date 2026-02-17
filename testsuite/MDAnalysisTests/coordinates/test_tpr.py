@@ -64,8 +64,10 @@ from MDAnalysisTests.datafiles import (
     TPR455Double,
     TPR_xvf_2024_4,
     TPR_NNPOT_2025_0,
+    TPR_NNPOT_2026_0,
     TPR2020B2,
     INPCRD,
+    TPR_gh_5145,
 )
 import MDAnalysis as mda
 
@@ -81,6 +83,14 @@ from numpy.testing import assert_allclose, assert_equal
         # this case is an alanine dipeptide
         # with neural network potential active
         # and nonzero velocities
+        (
+            TPR_NNPOT_2026_0,  # tpx 138
+            [2.36700e00, 2.30000e-02, 9.20000e-02],
+            [2.95100e00, 2.00000e-01, 2.41000e-01],
+            (23, 3),
+            [-4.72100e-01, -2.20900e-01, -2.42800e-01],
+            [-1.11900e-01, -3.69300e-01, -6.10000e-03],
+        ),
         (
             TPR_NNPOT_2025_0,  # tpx 137
             [2.36700e00, 2.30000e-02, 9.20000e-02],
@@ -422,6 +432,14 @@ from numpy.testing import assert_allclose, assert_equal
             (2263, 3),
             np.zeros(3),
             np.zeros(3),
+        ),
+        (
+            TPR_gh_5145,
+            [1.54000e00, 8.79000e-01, 1.36400e00],
+            [1.54000e00, 8.79000e-01, 1.36400e00],
+            (1, 3),
+            [-0.7155559, -0.1859867, -0.05803469],
+            [-0.7155559, -0.1859867, -0.05803469],
         ),
     ],
 )
