@@ -25,10 +25,7 @@ from unittest.mock import patch
 
 import re
 import os
-import sys
 import shutil
-import subprocess
-import time
 from pathlib import Path
 
 import numpy as np
@@ -59,7 +56,6 @@ from MDAnalysisTests.coordinates.base import (
 )
 
 import MDAnalysis as mda
-from MDAnalysis.coordinates.base import Timestep
 from MDAnalysis.coordinates import XDR
 from MDAnalysisTests.util import get_userid
 from filelock import FileLock
@@ -320,7 +316,7 @@ class TestXTCReaderClass(object):
             with XTCReader(XTC) as trj:
                 N = trj.n_frames
                 frames = [ts.frame for ts in trj]
-        except:
+        except Exception:
             raise AssertionError("with_statement not working for XTCReader")
         assert_equal(
             N,
@@ -1050,6 +1046,19 @@ class _GromacsReader_offsets(object):
             os.path.exists(XDR.offsets_filename(filename, ending=".lock")),
             False,
         )
+
+    def test_offset_lock_created(self):
+        lock_file_path = XDR.offsets_filename(self.filename, ending="lock")
+
+        with FileLock(lock_file_path) as lock:
+            # Lock acquired in context manager, so lock file should exist
+            assert lock.is_locked
+            assert os.path.exists(lock_file_path)
+
+            # Explicitly release lock, file should be deleted
+            lock.release()
+            assert not lock.is_locked
+            assert not os.path.exists(lock_file_path)
 
 
 class TestXTCReader_offsets(_GromacsReader_offsets):
