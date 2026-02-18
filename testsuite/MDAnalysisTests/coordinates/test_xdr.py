@@ -1048,7 +1048,6 @@ class _GromacsReader_offsets(object):
             False,
         )
 
-    
     def test_offset_lock_created(self):
         lock_file_path = XDR.offsets_filename(self.filename, ending="lock")
 
