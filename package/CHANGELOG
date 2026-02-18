@@ -15,7 +15,7 @@ The rules for this file:
 
 -------------------------------------------------------------------------------
 ??/??/?? IAlibay, orbeckst, marinegor, tylerjereddy, ljwoods2, marinegor,
-         spyke7, talagayev, tanii1125, BradyAJohnston
+         spyke7, talagayev, tanii1125, BradyAJohnston, jeremyleung521
 
  * 2.11.0
 
@@ -35,6 +35,7 @@ Fixes
    to version 5.1.0 (Issue #5145, PR #5146)
  * Fixes incorrect assignment of secondary structure to proline residues in
    DSSP by porting upstream PyDSSP 0.9.1 fix (Issue #4913)
+ * Drop/Replace lock file test in test_xdr (Issue #5236, PR #5237)
 
 Enhancements
  * Adds support for parsing `.tpr` files produced by GROMACS 2026.0
