@@ -26,6 +26,7 @@ from unittest.mock import patch
 import re
 import os
 import shutil
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -1047,6 +1048,7 @@ class _GromacsReader_offsets(object):
             False,
         )
 
+    
     def test_offset_lock_created(self):
         lock_file_path = XDR.offsets_filename(self.filename, ending="lock")
 
@@ -1055,10 +1057,11 @@ class _GromacsReader_offsets(object):
             assert lock.is_locked
             assert os.path.exists(lock_file_path)
 
-            # Explicitly release lock, file should be deleted
+            # Explicitly release lock, file should be deleted on UNIX
             lock.release()
             assert not lock.is_locked
-            assert not os.path.exists(lock_file_path)
+            if not sys.platform.startswith("win"):
+                assert not os.path.exists(lock_file_path)
 
 
 class TestXTCReader_offsets(_GromacsReader_offsets):
