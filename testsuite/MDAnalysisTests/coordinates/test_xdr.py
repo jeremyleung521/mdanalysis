@@ -1044,7 +1044,7 @@ class _GromacsReader_offsets(object):
         assert_equal(os.path.exists(XDR.offsets_filename(filename)), False)
         # check the lock file is not created as well.
         assert_equal(
-            os.path.exists(XDR.offsets_filename(filename, ending=".lock")),
+            os.path.exists(XDR.offsets_filename(filename, ending="lock")),
             False,
         )
 
