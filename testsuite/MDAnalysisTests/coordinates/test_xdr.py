@@ -1060,6 +1060,8 @@ class _GromacsReader_offsets(object):
             lock.release()
             assert not lock.is_locked
             if not sys.platform.startswith("win"):
+                # As of filelock>=3.21.0, filelock explicitly deletes lockfile
+                # upon release on UNIX. filelock does not do that on windows.
                 assert not os.path.exists(lock_file_path)
 
 
