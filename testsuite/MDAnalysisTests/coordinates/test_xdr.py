@@ -27,6 +27,7 @@ import re
 import os
 import shutil
 import sys
+from filelock import FileLock
 from pathlib import Path
 
 import numpy as np
@@ -59,7 +60,6 @@ from MDAnalysisTests.coordinates.base import (
 import MDAnalysis as mda
 from MDAnalysis.coordinates import XDR
 from MDAnalysisTests.util import get_userid
-from filelock import FileLock
 
 
 @pytest.mark.parametrize(
